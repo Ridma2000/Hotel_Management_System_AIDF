@@ -1,3 +1,4 @@
+// src/api/location.ts
 import express from "express";
 import {
   getAllLocations,
@@ -13,14 +14,14 @@ const locationsRouter = express.Router();
 
 locationsRouter
   .route("/")
-  .get(getAllLocations)
-  .post(isAuthenticated, createLocation);
+  .get(getAllLocations)                     // public
+  .post(isAuthenticated, createLocation);   // protected (adjust if needed)
 
 locationsRouter
   .route("/:_id")
-  .get(getLocationById)
-  .put(updateLocation)
-  .patch(patchLocation)
-  .delete(deleteLocation);
+  .get(getLocationById)                     // public
+  .put(isAuthenticated, updateLocation)     // protected
+  .patch(isAuthenticated, patchLocation)    // protected
+  .delete(isAuthenticated, deleteLocation); // protected
 
-export default locationsRouter; 
+export default locationsRouter;

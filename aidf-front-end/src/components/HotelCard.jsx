@@ -1,7 +1,7 @@
 import { MapPin, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { Link } from "react-router"; // Import Link from react-router-dom
+import { Link } from "react-router";
 
 function HotelCard(props) {
   // let num = 1;
@@ -47,18 +47,13 @@ function HotelCard(props) {
           <span className="text-xl font-bold">${props.hotel.price}</span>
         </div>
       </div>
-      
-      { /*<div className="mt-2">
+      {/* <div className="mt-2">
         <p className="text-red-500 text-3xl">{num}</p>
         <Button type="button" className={"w-full"} onClick={handleClick}>
           Click Me
         </Button>
       </div> */}
     </Link>
-
-    
-
-
   );
 }
 

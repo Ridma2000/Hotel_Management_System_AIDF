@@ -23,8 +23,6 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-
-
   const goToSlide = useCallback(
     (index) => {
       if (index === currentSlide || isTransitioning) return;

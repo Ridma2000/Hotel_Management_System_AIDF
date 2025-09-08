@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = 0;
 
-export const counterSlice = createSlice({   //making the slice for the counter
+export const counterSlice = createSlice({
   name: "counter",
   initialState,
   reducers: {

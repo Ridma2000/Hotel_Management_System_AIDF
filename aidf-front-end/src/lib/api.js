@@ -54,6 +54,7 @@ export const api = createApi({
           } else {
             setTimeout(checkToken, 500);
           }
+
         }
         checkToken();
       });
@@ -65,6 +66,13 @@ export const api = createApi({
     }),
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
+    }),
+    createHotel: build.mutation({
+      query: (hotel) => ({
+        url: "hotels",
+        method: "POST",
+        body: hotel,
+      }),
     }),
     addLocation: build.mutation({
       query: (location) => ({
@@ -93,7 +101,9 @@ export const api = createApi({
 export const {
   useGetAllHotelsQuery,
   useGetHotelByIdQuery,
+  useCreateHotelMutation,
   useAddLocationMutation,
   useGetAllLocationsQuery,
   useAddReviewMutation,
 } = api;
+

@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Globe, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router";
 
 function Navigation() {
-  //   const { user } = useUser();
+  const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const menuRef = useRef(null);
-    // const buttonRef = useRef(null);
+  const menuRef = useRef(null);
+  // const buttonRef = useRef(null);
 
   // Close menu when clicking outside
   //   useEffect(() => {
@@ -59,11 +59,11 @@ function Navigation() {
           </Link>
           {/* <p>{count}</p> */}
 
-          {/* {user?.publicMetadata?.role === "admin" && (
-            <a href={`/hotels/create`} className="transition-colors text-sm">
+           {user?.publicMetadata?.role === "admin" && (
+            <Link to={`/admin/create-hotel`} className="transition-colors text-sm">
               Create Hotel
-            </a>
-          )} */}
+            </Link>
+          )} 
         </div>
       </div>
 
@@ -152,7 +152,7 @@ function Navigation() {
                 </a>
                 {user?.publicMetadata?.role === "admin" && (
                   <a
-                    href="/hotels/create"
+                    href="/admin/create-hotel"
                     className="text-sm font-medium hover:text-gray-300 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
