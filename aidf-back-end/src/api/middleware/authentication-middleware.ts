@@ -4,9 +4,15 @@ import { Request, Response, NextFunction } from "express";
 import { getAuth } from "@clerk/express";
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = getAuth(req);
-  if (!userId) {
-    return next(new UnauthorizedError("Unauthorized"));
+  const auth = getAuth(req);
+  console.log("Authentication check:", {
+    userId: auth.userId,
+    hasAuth: !!auth,
+    authorizationHeader: req.headers.authorization ? "Present" : "Missing"
+  });
+  
+  if (!auth.userId) {
+    return next(new UnauthorizedError("Unauthorized - No user ID found"));
   }
   return next();
 };

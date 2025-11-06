@@ -44,28 +44,50 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:8000/api/",
     prepareHeaders: async (headers) => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        const maxRetries = 20; // 10 seconds max wait
+        let retries = 0;
+        
         async function checkToken() {
           const clerk = window.Clerk;
-          if (clerk) {
-            const token = await clerk.session?.getToken();
-            headers.set("Authorization", `Bearer ${token}`);
-            resolve(headers);
+          if (clerk && clerk.session) {
+            try {
+              const token = await clerk.session.getToken();
+              if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+                console.log("Auth token set successfully");
+              } else {
+                console.warn("No token received from Clerk");
+              }
+              resolve(headers);
+            } catch (error) {
+              console.error("Error getting token:", error);
+              // Don't reject, just resolve with headers to allow request to proceed
+              resolve(headers);
+            }
           } else {
-            setTimeout(checkToken, 500);
+            retries++;
+            if (retries < maxRetries) {
+              setTimeout(checkToken, 500);
+            } else {
+              console.error("Clerk not ready after max retries");
+              resolve(headers); // Resolve anyway to allow the request
+            }
           }
-
         }
         checkToken();
       });
     },
   }),
+  tagTypes: ["Hotels", "Locations", "Reviews"],
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
+      providesTags: ["Hotels"],
     }),
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
+      providesTags: ["Hotels"],
     }),
     createHotel: build.mutation({
       query: (hotel) => ({
@@ -73,6 +95,7 @@ export const api = createApi({
         method: "POST",
         body: hotel,
       }),
+      invalidatesTags: ["Hotels"],
     }),
     addLocation: build.mutation({
       query: (location) => ({
@@ -82,6 +105,7 @@ export const api = createApi({
           name: location.name,
         },
       }),
+      invalidatesTags: ["Locations"],
     }),
     addReview: build.mutation({
       query: (review) => ({
@@ -89,9 +113,11 @@ export const api = createApi({
         method: "POST",
         body: review,
       }),
+      invalidatesTags: ["Reviews"],
     }),
     getAllLocations: build.query({
       query: () => "locations",
+      providesTags: ["Locations"],
     }),
   }),
 });

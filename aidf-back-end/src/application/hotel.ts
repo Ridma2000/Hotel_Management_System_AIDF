@@ -34,8 +34,8 @@ export const createHotel = async (
       throw new ValidationError(`${result.error.message}`);
     }
 
-    await Hotel.create(result.data);
-    res.status(201).send();
+    const newHotel = await Hotel.create(result.data);
+    res.status(201).json(newHotel);
   } catch (error) {
     next(error);
   }

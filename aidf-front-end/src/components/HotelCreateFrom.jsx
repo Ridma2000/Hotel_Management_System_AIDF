@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +39,8 @@ const formSchema = z.object({
 });
 
 export default function HotelCreateFrom() {
+  const navigate = useNavigate();
+  
   // 1. Define your form.
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -55,10 +59,17 @@ export default function HotelCreateFrom() {
   async function onSubmit(values) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    console.log("Submitting values:", values);
     try {
-      await createHotel(values).unwrap();
+      const result = await createHotel(values).unwrap();
+      console.log("Hotel created successfully:", result);
+      toast.success("Hotel created successfully!");
+      form.reset();
+      navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Error creating hotel:", error);
+      const errorMessage = error?.data?.message || error?.message || "Failed to create hotel. Please try again.";
+      toast.error(errorMessage);
     }
   }
 
@@ -136,6 +147,7 @@ export default function HotelCreateFrom() {
                 <Input
                   type="number"
                   placeholder="100"
+                  value={field.value}
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
                     if (isNaN(val)) {
@@ -151,7 +163,9 @@ export default function HotelCreateFrom() {
             </FormItem>
           )}
         />
-        <Button type="submit">Create Hotel</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Creating..." : "Create Hotel"}
+        </Button>
         <DevTool control={form.control} />
       </form>
     </Form>
