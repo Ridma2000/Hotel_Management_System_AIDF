@@ -52,10 +52,9 @@ externalPort = 80
 [[ports]]
 localPort = 8000
 externalPort = 8000
-exposeLocalhost = true
 
 [[ports]]
-localPort = 41839
+localPort = 38941
 externalPort = 3000
 
 [deployment]

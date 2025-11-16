@@ -32,18 +32,16 @@ This is a full-stack hotel management application built with the MERN stack (Mon
 
 ## Environment Variables
 
-### Backend (.env in aidf-back-end/)
-```
-MONGODB_URL=<MongoDB Atlas connection string>
-CLERK_PUBLISHABLE_KEY=<Clerk publishable key>
-CLERK_SECRET_KEY=<Clerk secret key>
-OPENAI_API_KEY=<OpenAI API key>
-```
+All sensitive credentials are stored securely in **Replit Secrets** (not in .env files). The following environment variables are required:
 
-### Frontend (.env in aidf-front-end/)
-```
-VITE_CLERK_PUBLISHABLE_KEY=<Clerk publishable key>
-```
+### Required Secrets
+- `MONGODB_URL` - MongoDB Atlas connection string
+- `CLERK_PUBLISHABLE_KEY` - Clerk publishable key for backend
+- `CLERK_SECRET_KEY` - Clerk secret key for backend authentication
+- `OPENAI_API_KEY` - OpenAI API key for AI recommendations
+- `VITE_CLERK_PUBLISHABLE_KEY` - Clerk publishable key for frontend (same as CLERK_PUBLISHABLE_KEY)
+
+**Security Note**: All .env files have been removed from the project and added to .gitignore to prevent accidental credential exposure.
 
 ## Development Setup
 
@@ -71,11 +69,14 @@ VITE_CLERK_PUBLISHABLE_KEY=<Clerk publishable key>
 ## Recent Changes (November 16, 2025)
 - Configured for Replit environment
 - Updated Vite to run on port 5000 with 0.0.0.0 host
+- Configured backend to listen on 0.0.0.0:8000 (accessible via Replit proxy)
 - Configured CORS to allow all origins for Replit proxy
-- Updated frontend API calls to use Replit backend domain
+- Updated frontend API calls to use Replit subdomain pattern (https://8000-hostname)
 - Fixed TypeScript configuration
 - Set up workflows for both frontend and backend
 - Configured deployment for production
+- **Security**: Migrated all credentials to Replit Secrets and removed .env files
+- Updated .gitignore files to prevent credential exposure
 
 ## API Endpoints
 - `GET /api/hotels` - Get all hotels
