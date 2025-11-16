@@ -23,7 +23,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: true,
+    credentials: true,
   })
 );
 app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
@@ -54,6 +55,6 @@ app.use(globalErrorHandlingMiddleware);
 connectDB();
 
 const PORT = 8000;
-app.listen(PORT, () => {
-  console.log("Server is listening on PORT: ", PORT);
+app.listen(PORT, "localhost", () => {
+  console.log("Server is listening on localhost:", PORT);
 });
