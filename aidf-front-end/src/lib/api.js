@@ -42,7 +42,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: `https://${window.location.hostname}:8000/api/`,
+    baseUrl: `https://8000-${window.location.hostname}/api/`,
     prepareHeaders: async (headers) => {
       return new Promise((resolve, reject) => {
         const maxRetries = 20; // 10 seconds max wait
