@@ -4,3 +4,61 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "frontend"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "backend"
+
+[[workflows.workflow]]
+name = "frontend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd aidf-front-end && npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow]]
+name = "backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd aidf-back-end && npm run dev"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+exposeLocalhost = true
+
+[[ports]]
+localPort = 41839
+externalPort = 3000
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["bash", "-c", "cd aidf-back-end && npm install && npm run dev & npx serve -s aidf-front-end/dist -l 5000"]
+build = ["bash", "-c", "cd aidf-front-end && npm install && npm run build"]
