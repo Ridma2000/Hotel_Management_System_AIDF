@@ -57,10 +57,6 @@ externalPort = 5173
 localPort = 8000
 externalPort = 8000
 
-[[ports]]
-localPort = 43985
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "autoscale"
 run = ["bash", "-c", "cd aidf-back-end && npm install && npm run dev & npx serve -s aidf-front-end/dist -l 5000"]
