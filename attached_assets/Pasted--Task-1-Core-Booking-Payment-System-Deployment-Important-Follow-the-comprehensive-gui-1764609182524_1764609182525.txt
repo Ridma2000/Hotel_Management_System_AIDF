@@ -1,0 +1,75 @@
+## Task 1: Core Booking & Payment System + Deployment
+
+**Important**: Follow the comprehensive guides provided for this task:
+
+- **Booking Implementation**: Refer to the codebase and booking + stripe document
+- **Stripe Integration**: Refer to the codebase and the booking + stripe document
+- **Deployment**: Follow your deployment guide for production setup
+- **Reference Repositories**:
+    - Backend: https://github.com/ManupaDev/aidf-5-back-end
+    - Frontend: https://github.com/ManupaDev/aidf-5-front-end
+
+### 1.1 Booking Feature Implementation
+
+**Objective**: Implement a complete hotel booking system with user authentication
+
+**Requirements**:
+
+- ✅ **User Authentication**: Integrate Clerk for secure user login/signup
+- ✅ **Hotel Selection**: Users can browse and select hotels
+- ✅ **Date Selection**: Interactive date picker for check-in/check-out dates
+- ✅ **Booking Creation**: Create booking records with PENDING status
+- ✅ **Room Assignment**: Automatic unique room number generation
+- ✅ **Validation**: Proper input validation and error handling
+
+**Implementation**: Follow existing codebase patterns and the Stripe integration guide.
+
+### 1.2 Stripe Payment Integration
+
+**Objective**: Implement secure payment processing using Stripe
+
+**Requirements**:
+
+- ✅ **Product Catalog**: Stripe Products with default Prices for each hotel
+- ✅ **Embedded Checkout**: Stripe Embedded Checkout integration
+- ✅ **Payment Sessions**: Checkout Session creation with metadata linking
+- ✅ **Webhook Handling**: Process payment confirmations asynchronously
+- ✅ **Status Management**: Update booking status from PENDING to PAID
+- ✅ **Error Handling**: Handle payment failures and edge cases
+
+**Implementation**: Follow the detailed Stripe Integration documentation which includes:
+
+- Step-by-step Stripe dashboard configuration
+- Code examples from the actual codebase
+- Webhook setup and handling
+- Environment variable configuration
+- Security best practices
+
+### 1.3 Deployment
+
+**Objective**: Deploy both frontend and backend to production
+
+**Requirements**:
+
+- **Backend Deployment**: Deploy to cloud platform (Render, Railway, Heroku, etc.)
+- **Frontend Deployment**: Deploy to Vercel, Netlify, or similar
+- **Database**: MongoDB Atlas production cluster
+- **Environment Variables**: Secure configuration management
+- **HTTPS**: SSL certificates for secure communication
+- **Webhook Configuration**: Production webhook endpoints
+- **Testing**: Verify end-to-end functionality in production
+
+**Implementation**: Follow your deployment guide for:
+
+- Platform-specific deployment steps
+- Environment variable configuration
+- Database setup and connection
+- Domain and SSL configuration
+- Production testing procedures
+
+**Deliverables**:
+
+- Live backend URL
+- Live frontend URL
+- Functional payment flow in production
+- Proper error handling and logging
