@@ -11,6 +11,7 @@ import SignUpPage from "./pages/sign-up.page.jsx";
 import PaymentPage from "./pages/payment.page.jsx";
 import BookingCompletePage from "./pages/booking-complete.page.jsx";
 import BookingsPage from "./pages/bookings.page.jsx";
+import MyAccountPage from "./pages/my-account.page.jsx";
 
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
@@ -44,6 +45,7 @@ createRoot(document.getElementById("root")).render(
                 <Route path="/booking/payment" element={<PaymentPage />} />
                 <Route path="/booking/complete" element={<BookingCompletePage />} />
                 <Route path="/bookings" element={<BookingsPage />} />
+                <Route path="/my-account" element={<MyAccountPage />} />
                 <Route element={<AdminProtectLayout />}>
                   <Route
                     path="/admin/create-hotel"

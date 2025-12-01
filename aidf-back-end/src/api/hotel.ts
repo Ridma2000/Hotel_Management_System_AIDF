@@ -11,7 +11,7 @@ import {
 } from "../application/hotel";
 import isAuthenticated from "./middleware/authentication-middleware";
 import isAdmin from "./middleware/authorization-middleware";
-import { respondToAIQuery } from "../application/ai";
+import { respondToAIQuery, searchHotelsWithAI } from "../application/ai";
 
 const hotelsRouter = express.Router();
 
@@ -21,6 +21,7 @@ hotelsRouter
   .post(isAuthenticated, isAdmin, createHotel);
 
 hotelsRouter.route("/ai").post(respondToAIQuery);
+hotelsRouter.route("/search").post(searchHotelsWithAI);
 
 hotelsRouter
   .route("/:_id")

@@ -66,30 +66,49 @@ All sensitive credentials are stored securely in **Replit Secrets** (not in .env
 - **Build**: Installs dependencies and builds frontend
 - **Run**: Starts backend API and serves frontend static files
 
-## Recent Changes (November 16, 2025)
+## Recent Changes (December 1, 2025)
+### New Features
+- **My Account Page** (`/my-account`): User profile dashboard with Clerk integration, booking statistics, and booking history with status filtering
+- **Enhanced Hotel Listing** (`/hotels`): Grid/list view toggle, location filtering, price range slider, sorting options, pagination, and URL state preservation
+- **AI-Powered Search**: Natural language hotel search on homepage with GPT-4o-mini integration and fallback to keyword search
+- **Stripe Payment Integration**: Complete booking flow with embedded Stripe checkout, webhook handling, and payment status tracking
+- **Updated Navigation**: Active state indicators, Hotels link, and My Account for signed-in users
+- **Custom Design System**: Updated color palette with OKLCH colors, improved typography, and animation utilities
+
+### Previous Changes (November 16, 2025)
 - Configured for Replit environment
 - Updated Vite to run on port 5000 with 0.0.0.0 host
 - Configured backend to listen on 0.0.0.0:8000 (accessible via Replit proxy)
 - Configured CORS to allow all origins for Replit proxy
-- Updated frontend API calls to use Replit subdomain pattern (https://8000-hostname)
-- Fixed TypeScript configuration
 - Set up workflows for both frontend and backend
 - Configured deployment for production
 - **Security**: Migrated all credentials to Replit Secrets and removed .env files
-- Updated .gitignore files to prevent credential exposure
 
 ## API Endpoints
+### Hotels
 - `GET /api/hotels` - Get all hotels
 - `GET /api/hotels/:id` - Get hotel by ID
 - `POST /api/hotels` - Create new hotel (admin only)
+- `POST /api/hotels/search` - AI-powered hotel search
+- `POST /api/hotels/ai` - AI chat recommendations
+
+### Bookings & Payments
+- `POST /api/bookings` - Create new booking
+- `GET /api/bookings` - Get user's bookings (authenticated)
+- `GET /api/bookings/:id` - Get booking by ID
+- `POST /api/payments/create-checkout-session` - Create Stripe checkout session
+- `GET /api/payments/session-status` - Get payment session status
+- `POST /api/payments/webhook` - Stripe webhook handler
+
+### Other
 - `GET /api/locations` - Get all locations
 - `POST /api/locations` - Add new location
 - `POST /api/reviews` - Add hotel review
-- `GET /api/auth-test` - Test authentication
 
 ## User Preferences
 - Standard React/TypeScript conventions
-- Tailwind CSS for styling
-- Redux Toolkit for state management
+- Tailwind CSS for styling with custom design tokens
+- Redux Toolkit with RTK Query for state management
 - Protected routes for authenticated features
 - Admin-only features for hotel management
+- Stripe integration for secure payments
