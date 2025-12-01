@@ -1,11 +1,11 @@
 import Hotel from "../infrastructure/entities/Hotel";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
+import { getStripeClient } from "../infrastructure/stripe";
 
 import { CreateHotelDTO } from "../domain/dtos/hotel";
 
 import { Request, Response, NextFunction } from "express";
-import { z } from "zod";
 
 export const getAllHotels = async (
   req: Request,
@@ -34,7 +34,25 @@ export const createHotel = async (
       throw new ValidationError(`${result.error.message}`);
     }
 
-    const newHotel = await Hotel.create(result.data);
+    const stripe = await getStripeClient();
+    const product = await stripe.products.create({
+      name: result.data.name,
+      description: result.data.description,
+      default_price_data: {
+        unit_amount: Math.round(result.data.price * 100),
+        currency: "usd",
+      },
+    });
+
+    const stripePriceId = typeof product.default_price === "string" 
+      ? product.default_price 
+      : product.default_price?.id;
+
+    const newHotel = await Hotel.create({
+      ...result.data,
+      stripePriceId,
+    });
+    
     res.status(201).json(newHotel);
   } catch (error) {
     next(error);
@@ -123,6 +141,40 @@ export const deleteHotel = async (
     }
     await Hotel.findByIdAndDelete(_id);
     res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const setupStripePrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const _id = req.params._id;
+    const hotel = await Hotel.findById(_id);
+    if (!hotel) {
+      throw new NotFoundError("Hotel not found");
+    }
+
+    const stripe = await getStripeClient();
+    const product = await stripe.products.create({
+      name: hotel.name,
+      description: hotel.description,
+      default_price_data: {
+        unit_amount: Math.round(hotel.price * 100),
+        currency: "usd",
+      },
+    });
+
+    const stripePriceId = typeof product.default_price === "string" 
+      ? product.default_price 
+      : product.default_price?.id;
+
+    await Hotel.findByIdAndUpdate(_id, { stripePriceId });
+    
+    res.status(200).json({ stripePriceId });
   } catch (error) {
     next(error);
   }

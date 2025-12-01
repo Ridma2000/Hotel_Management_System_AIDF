@@ -2,16 +2,19 @@ import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 import hotelsRouter from "./api/hotel";
 import connectDB from "./infrastructure/db";
 import reviewRouter from "./api/review";
 import locationsRouter from "./api/location";
+import bookingsRouter from "./api/booking";
+import paymentsRouter from "./api/payment";
 import globalErrorHandlingMiddleware from "./api/middleware/global-error-handling-middleware";
+import { handleWebhook } from "./application/payment";
 
 import { clerkMiddleware } from "@clerk/express";
 
-// Check environment variables
 console.log("Environment check:");
 console.log("- MONGODB_URL:", process.env.MONGODB_URL ? "✓ Set" : "✗ Missing");
 console.log("- CLERK_PUBLISHABLE_KEY:", process.env.CLERK_PUBLISHABLE_KEY ? "✓ Set" : "✗ Missing");
@@ -19,22 +22,22 @@ console.log("- CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY ? "✓ Set" : "�
 
 const app = express();
 
-// Convert HTTP payloads into JS objects
-app.use(express.json());
 app.use(
   cors({
     origin: true,
     credentials: true,
   })
 );
-app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
 
-// app.use((req, res, next) => {
-//   console.log(req.method, req.url);
-//   next();
-// });
+app.post(
+  "/api/stripe/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  handleWebhook
+);
 
-// Test auth endpoint
+app.use(express.json());
+app.use(clerkMiddleware());
+
 app.get("/api/auth-test", (req, res) => {
   const { getAuth } = require("@clerk/express");
   const auth = getAuth(req);
@@ -49,6 +52,8 @@ app.get("/api/auth-test", (req, res) => {
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/locations", locationsRouter);
+app.use("/api/bookings", bookingsRouter);
+app.use("/api/payments", paymentsRouter);
 
 app.use(globalErrorHandlingMiddleware);
 

@@ -7,6 +7,7 @@ import {
   updateHotel,
   patchHotel,
   deleteHotel,
+  setupStripePrice,
 } from "../application/hotel";
 import isAuthenticated from "./middleware/authentication-middleware";
 import isAdmin from "./middleware/authorization-middleware";
@@ -16,16 +17,18 @@ const hotelsRouter = express.Router();
 
 hotelsRouter
   .route("/")
-  .get(getAllHotels)                             // public
-  .post(isAuthenticated, isAdmin, createHotel);  // protected
+  .get(getAllHotels)
+  .post(isAuthenticated, isAdmin, createHotel);
 
-hotelsRouter.route("/ai").post(respondToAIQuery); // if public AI search
+hotelsRouter.route("/ai").post(respondToAIQuery);
 
 hotelsRouter
   .route("/:_id")
-  .get(getHotelById)                               // public
-  .put(isAuthenticated, isAdmin, updateHotel)      // protected
-  .patch(isAuthenticated, isAdmin, patchHotel)     // protected
-  .delete(isAuthenticated, isAdmin, deleteHotel);  // protected
+  .get(getHotelById)
+  .put(isAuthenticated, isAdmin, updateHotel)
+  .patch(isAuthenticated, isAdmin, patchHotel)
+  .delete(isAuthenticated, isAdmin, deleteHotel);
+
+hotelsRouter.post("/:_id/stripe/price", isAuthenticated, isAdmin, setupStripePrice);
 
 export default hotelsRouter;

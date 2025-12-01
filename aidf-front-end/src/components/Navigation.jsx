@@ -112,7 +112,7 @@ function Navigation() {
             asChild
             className="bg-white text-black hover:bg-gray-200 text-xs hidden md:flex"
           >
-            <Link to="/account">My Account</Link>
+            <Link to="/bookings">My Bookings</Link>
           </Button>
         </SignedIn>
 

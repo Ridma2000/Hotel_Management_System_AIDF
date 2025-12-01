@@ -1,10 +1,10 @@
 import "dotenv/config";
 import connectDB from "./infrastructure/db";
+import { getStripeClient } from "./infrastructure/stripe";
 
 import Hotel from "./infrastructure/entities/Hotel";
 import Location from "./infrastructure/entities/Location";
 
-// Sample hotels data (without _id and reviews - will be auto-generated)
 const hotels = [
   {
     name: "Montmartre Majesty Hotel",
@@ -48,81 +48,64 @@ const hotels = [
   },
 ];
 
-// Sample reviews data
-const reviews = [
-  {
-    rating: 5,
-    comment:
-      "Absolutely amazing hotel! The views are breathtaking and the service is impeccable.",
-  },
-  {
-    rating: 4,
-    comment:
-      "Great location and comfortable rooms. Would definitely recommend!",
-  },
-  {
-    rating: 5,
-    comment:
-      "Perfect stay! The amenities are top-notch and the staff is very friendly.",
-  },
-  {
-    rating: 4,
-    comment:
-      "Beautiful hotel with excellent facilities. The breakfast was delicious.",
-  },
-  {
-    rating: 5,
-    comment:
-      "Outstanding experience! The room was spacious and the view was spectacular.",
-  },
-  {
-    rating: 4,
-    comment: "Very nice hotel with good service. The location is convenient.",
-  },
-  {
-    rating: 5,
-    comment: "Exceptional hotel! Everything exceeded our expectations.",
-  },
-  {
-    rating: 4,
-    comment: "Lovely stay! The hotel is clean and the staff is helpful.",
-  },
-];
-
-// Sample locations data (extracted from hotel locations)
 const locations = [
   { name: "France" },
   { name: "Australia" },
   { name: "Japan" },
 ];
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const seedDatabase = async () => {
   try {
-    // Connect to database
     await connectDB();
-
-    // Clear existing data
 
     await Hotel.deleteMany({});
     await Location.deleteMany({});
 
     console.log("Cleared existing data");
 
-    // Insert locations
     const createdLocations = await Location.insertMany(locations);
     console.log(`Created ${createdLocations.length} locations`);
 
-    // Insert hotels
-    const createdHotels = await Hotel.insertMany(hotels);
-    console.log(`Created ${createdHotels.length} hotels`);
+    console.log("Creating hotels with Stripe products...");
+    const stripe = await getStripeClient();
 
-    console.log("Updated hotels with review references");
-    console.log("Database seeded successfully!");
+    const createdHotels = [];
+    for (const hotelData of hotels) {
+      console.log(`Creating Stripe product for ${hotelData.name}...`);
 
-    // Display summary
+      const product = await stripe.products.create({
+        name: hotelData.name,
+        description: hotelData.description,
+        default_price_data: {
+          unit_amount: Math.round(hotelData.price * 100),
+          currency: "usd",
+        },
+      });
+
+      const stripePriceId =
+        typeof product.default_price === "string"
+          ? product.default_price
+          : product.default_price?.id;
+
+      const hotel = await Hotel.create({
+        ...hotelData,
+        stripePriceId,
+      });
+
+      createdHotels.push(hotel);
+      console.log(`Created: ${hotel.name} with Stripe price: ${stripePriceId}`);
+
+      await delay(300);
+    }
+
+    console.log(`Created ${createdHotels.length} hotels with Stripe prices`);
+
     console.log("\n=== SEED SUMMARY ===");
     console.log(`Locations: ${createdLocations.length}`);
     console.log(`Hotels: ${createdHotels.length}`);
+    console.log("Database seeded successfully!");
 
     process.exit(0);
   } catch (error) {
@@ -131,5 +114,4 @@ const seedDatabase = async () => {
   }
 };
 
-// Run the seed script
 seedDatabase();

@@ -31,6 +31,10 @@ const hotelSchema = new mongoose.Schema({
     ref: "Review",
     default: [],
   },
+  stripePriceId: {
+    type: String,
+    default: null,
+  },
 });
 
 const Hotel = mongoose.model("Hotel", hotelSchema);

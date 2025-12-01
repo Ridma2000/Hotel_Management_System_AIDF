@@ -2,15 +2,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAddReviewMutation, useGetHotelByIdQuery } from "@/lib/api";
+import { useAddReviewMutation, useGetHotelByIdQuery, useCreateBookingMutation } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
 import { Building2, Coffee, MapPin, PlusCircle, Star, Tv, Wifi } from "lucide-react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
+import BookingDialog from "@/components/BookingDialog";
+import { toast } from "sonner";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
+  const navigate = useNavigate();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
+  const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
 
   const { user } = useUser();
 
@@ -21,7 +25,26 @@ const HotelDetailsPage = () => {
         comment: "This is a test review",
         rating: 5,
       }).unwrap();
-    } catch (error) {}
+      toast.success("Review added successfully!");
+    } catch (error) {
+      toast.error("Failed to add review");
+    }
+  };
+
+  const handleBook = async ({ hotelId, checkIn, checkOut }) => {
+    try {
+      const booking = await createBooking({
+        hotelId,
+        checkIn,
+        checkOut,
+      }).unwrap();
+      
+      toast.success("Booking created! Redirecting to payment...");
+      navigate(`/booking/payment?bookingId=${booking._id}`);
+    } catch (error) {
+      toast.error(error.data?.message || "Failed to create booking");
+      throw error;
+    }
   };
 
   if (isLoading) {
@@ -88,7 +111,7 @@ const HotelDetailsPage = () => {
             <img
               src={hotel.image}
               alt={hotel.name}
-              className="absolute object-cover rounded-lg"
+              className="absolute object-cover rounded-lg w-full h-full"
             />
           </div>
           <div className="flex space-x-2">
@@ -148,19 +171,23 @@ const HotelDetailsPage = () => {
               <p className="text-2xl font-bold">${hotel.price}</p>
               <p className="text-sm text-muted-foreground">per night</p>
             </div>
-            <Button
-              disabled={isAddReviewLoading}
-              className={`${isAddReviewLoading ? "opacity-50" : ""}`}
-              onClick={handleAddReview}
-            >
-              <PlusCircle className="w-4 h-4" /> Add Review
-            </Button>
-            {/* <BookingDialog
-              hotelName={hotel.name}
-              hotelId={id}
-              onSubmit={handleBook}
-              isLoading={isCreateBookingLoading}
-            /> */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={isAddReviewLoading}
+                className={`${isAddReviewLoading ? "opacity-50" : ""}`}
+                onClick={handleAddReview}
+              >
+                <PlusCircle className="w-4 h-4" /> Add Review
+              </Button>
+              <BookingDialog
+                hotelName={hotel.name}
+                hotelPrice={hotel.price}
+                hotelId={_id}
+                onSubmit={handleBook}
+                isLoading={isCreateBookingLoading}
+              />
+            </div>
           </div>
         </div>
       </div>

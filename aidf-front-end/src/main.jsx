@@ -8,6 +8,9 @@ import HotelsPage from "./pages/hotels.page.jsx";
 import NotFoundPage from "./pages/not-found.page.jsx";
 import SignInPage from "./pages/sign-in.page.jsx";
 import SignUpPage from "./pages/sign-up.page.jsx";
+import PaymentPage from "./pages/payment.page.jsx";
+import BookingCompletePage from "./pages/booking-complete.page.jsx";
+import BookingsPage from "./pages/bookings.page.jsx";
 
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
@@ -38,6 +41,9 @@ createRoot(document.getElementById("root")).render(
               <Route path="/hotels" element={<HotelsPage />} />
               <Route element={<ProtectLayout />}>
                 <Route path="/hotels/:_id" element={<HotelDetailsPage />} />
+                <Route path="/booking/payment" element={<PaymentPage />} />
+                <Route path="/booking/complete" element={<BookingCompletePage />} />
+                <Route path="/bookings" element={<BookingsPage />} />
                 <Route element={<AdminProtectLayout />}>
                   <Route
                     path="/admin/create-hotel"
