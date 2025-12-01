@@ -1,4 +1,5 @@
 import Hotel from "../infrastructure/entities/Hotel";
+import Location from "../infrastructure/entities/Location";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
 import { getStripeClient } from "../infrastructure/stripe";
@@ -52,6 +53,18 @@ export const createHotel = async (
       ...result.data,
       stripePriceId,
     });
+
+    if (result.data.location) {
+      const locationName = result.data.location.split(",")[0].trim();
+      const escapedLocationName = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const existingLocation = await Location.findOne({ 
+        name: { $regex: new RegExp(`^${escapedLocationName}$`, 'i') } 
+      });
+      
+      if (!existingLocation) {
+        await Location.create({ name: locationName });
+      }
+    }
     
     res.status(201).json(newHotel);
   } catch (error) {

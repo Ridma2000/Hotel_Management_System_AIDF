@@ -4,9 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddReviewMutation, useGetHotelByIdQuery, useCreateBookingMutation } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
-import { Building2, Coffee, MapPin, PlusCircle, Star, Tv, Wifi } from "lucide-react";
+import { Building2, Coffee, MapPin, Star, Tv, Wifi } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import BookingDialog from "@/components/BookingDialog";
+import ReviewDialog from "@/components/ReviewDialog";
 import { toast } from "sonner";
 
 const HotelDetailsPage = () => {
@@ -18,16 +19,17 @@ const HotelDetailsPage = () => {
 
   const { user } = useUser();
 
-  const handleAddReview = async () => {
+  const handleAddReview = async ({ rating, comment }) => {
     try {
       await addReview({
         hotelId: _id,
-        comment: "This is a test review",
-        rating: 5,
+        comment,
+        rating,
       }).unwrap();
       toast.success("Review added successfully!");
     } catch (error) {
       toast.error("Failed to add review");
+      throw error;
     }
   };
 
@@ -172,14 +174,11 @@ const HotelDetailsPage = () => {
               <p className="text-sm text-muted-foreground">per night</p>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                disabled={isAddReviewLoading}
-                className={`${isAddReviewLoading ? "opacity-50" : ""}`}
-                onClick={handleAddReview}
-              >
-                <PlusCircle className="w-4 h-4" /> Add Review
-              </Button>
+              <ReviewDialog
+                hotelName={hotel.name}
+                onSubmit={handleAddReview}
+                isLoading={isAddReviewLoading}
+              />
               <BookingDialog
                 hotelName={hotel.name}
                 hotelPrice={hotel.price}
