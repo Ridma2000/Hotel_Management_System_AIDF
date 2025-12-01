@@ -53,7 +53,11 @@ export const api = createApi({
         method: "POST",
         body: review,
       }),
-      invalidatesTags: ["Reviews"],
+      invalidatesTags: ["Reviews", "Hotels"],
+    }),
+    getReviewsForHotel: build.query({
+      query: (hotelId) => `reviews/hotel/${hotelId}`,
+      providesTags: ["Reviews"],
     }),
     getAllLocations: build.query({
       query: () => "locations",
@@ -85,6 +89,7 @@ export const {
   useAddLocationMutation,
   useGetAllLocationsQuery,
   useAddReviewMutation,
+  useGetReviewsForHotelQuery,
   useCreateBookingMutation,
   useGetBookingByIdQuery,
   useGetUserBookingsQuery,

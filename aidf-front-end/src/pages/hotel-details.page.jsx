@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,16 +9,22 @@ import { Building2, Coffee, MapPin, Star, Tv, Wifi } from "lucide-react";
 import { useParams, useNavigate } from "react-router";
 import BookingDialog from "@/components/BookingDialog";
 import ReviewDialog from "@/components/ReviewDialog";
+import ReviewsSection from "@/components/ReviewsSection";
 import { toast } from "sonner";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
   const navigate = useNavigate();
+  const reviewsSectionRef = useRef(null);
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
   const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
 
   const { user } = useUser();
+
+  const scrollToReviews = () => {
+    reviewsSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleAddReview = async ({ rating, comment }) => {
     try {
@@ -136,14 +143,17 @@ const HotelDetailsPage = () => {
               <span className="sr-only">Add to favorites</span>
             </Button>
           </div>
-          <div className="flex items-center space-x-1">
+          <button
+            onClick={scrollToReviews}
+            className="flex items-center space-x-1 hover:opacity-80 transition-opacity cursor-pointer"
+          >
             <Star className="h-5 w-5 fill-primary text-primary" />
             <span className="font-bold">{hotel?.rating ?? "No rating"}</span>
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground underline underline-offset-2">
               ({hotel?.reviews.length === 0 ? "No" : hotel?.reviews.length}{" "}
               reviews)
             </span>
-          </div>
+          </button>
           <p className="text-muted-foreground">{hotel.description}</p>
           <Card>
             <CardContent className="p-4">
@@ -189,6 +199,13 @@ const HotelDetailsPage = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div ref={reviewsSectionRef} className="mt-8">
+        <ReviewsSection
+          hotelId={_id}
+          reviewCount={hotel?.reviews?.length}
+        />
       </div>
     </main>
   );
