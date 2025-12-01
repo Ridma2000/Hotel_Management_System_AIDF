@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import path from "path";
 
 import hotelsRouter from "./api/hotel";
 import connectDB from "./infrastructure/db";
@@ -55,11 +56,23 @@ app.use("/api/locations", locationsRouter);
 app.use("/api/bookings", bookingsRouter);
 app.use("/api/payments", paymentsRouter);
 
+if (process.env.NODE_ENV === "production") {
+  const frontendPath = path.join(__dirname, "../../aidf-front-end/dist");
+  app.use(express.static(frontendPath));
+  
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return next();
+    }
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
+
 app.use(globalErrorHandlingMiddleware);
 
 connectDB();
 
-const PORT = process.env.PORT || 8000;
+const PORT = parseInt(process.env.PORT || "8000", 10);
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Server is listening on 0.0.0.0:", PORT);
 });

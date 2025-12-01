@@ -58,7 +58,11 @@ externalPort = 5173
 localPort = 8000
 externalPort = 8000
 
+[[ports]]
+localPort = 39491
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd aidf-back-end && npm install && npm run dev & npx serve -s aidf-front-end/dist -l 5000"]
-build = ["bash", "-c", "cd aidf-front-end && npm install && npm run build"]
+run = ["bash", "-c", "cd aidf-back-end && NODE_ENV=production PORT=5000 npm run start"]
+build = ["bash", "-c", "cd aidf-front-end && npm install && npm run build && cd ../aidf-back-end && npm install && npm run build"]
